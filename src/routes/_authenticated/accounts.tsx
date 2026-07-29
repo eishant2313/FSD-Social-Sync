@@ -18,19 +18,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CheckCircle2, Plug, Link2, ShieldCheck, Zap } from "lucide-react";
+import { CheckCircle2, Plug, Link2, Linkedin, Twitter, Instagram } from "lucide-react";
 import { toast } from "sonner";
 
 const acctsQO = queryOptions({ queryKey: ["accounts"], queryFn: () => listConnectedAccounts() });
 
 export const Route = createFileRoute("/_authenticated/accounts")({
   loader: ({ context }) => context.queryClient.ensureQueryData(acctsQO),
-  head: () => ({ meta: [{ title: "Connected Networks · SocialSync Quantum" }] }),
+  head: () => ({ meta: [{ title: "Connected Accounts · Broadcast" }] }),
   component: () => (
     <Suspense
       fallback={
-        <div className="flex h-64 items-center justify-center text-slate-400 font-mono text-xs">
-          <Zap className="size-5 text-emerald-400 animate-spin mr-2" /> Loading Connected Networks…
+        <div className="flex h-64 items-center justify-center text-muted-foreground">
+          <span className="size-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         </div>
       }
     >
@@ -41,11 +41,11 @@ export const Route = createFileRoute("/_authenticated/accounts")({
 
 const SETUP_NOTES: Record<Platform, string> = {
   linkedin:
-    "Connect your LinkedIn profile or company page to publish multi-image & text posts directly.",
+    "Connect your LinkedIn profile or company page to publish directly from Broadcast.",
   twitter:
-    "Connect your X (Twitter) handle to schedule tweets and threads seamlessly.",
+    "Connect your X (Twitter) account to publish tweets and threads.",
   instagram:
-    "Connect your Instagram Business or Creator account to broadcast visual media.",
+    "Connect your Instagram Business or Creator account to schedule posts.",
 };
 
 function Inner() {
@@ -59,7 +59,7 @@ function Inner() {
     mutationFn: (p: { platform: Platform; displayName: string }) =>
       stubConnectAccount({ data: { platform: p.platform, displayName: p.displayName } }),
     onSuccess: () => {
-      toast.success("Network connection established!");
+      toast.success("Account connected successfully!");
       setDialogFor(null);
       setHandle("");
       qc.invalidateQueries({ queryKey: ["accounts"] });
@@ -70,7 +70,7 @@ function Inner() {
   const disc = useMutation({
     mutationFn: (platform: Platform) => disconnectAccount({ data: { platform } }),
     onSuccess: () => {
-      toast.success("Network disconnected.");
+      toast.success("Account disconnected");
       qc.invalidateQueries({ queryKey: ["accounts"] });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -78,18 +78,13 @@ function Inner() {
 
   return (
     <div className="space-y-8">
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl flex items-center gap-3">
-            Connected Networks
-            <span className="inline-flex items-center gap-1 rounded-full bg-purple-500/15 px-2.5 py-0.5 text-xs font-semibold text-purple-400 border border-purple-500/30">
-              <ShieldCheck className="size-3" /> OAuth Secured
-            </span>
-          </h1>
-          <p className="mt-1 text-sm text-slate-400">
-            Manage active publishing targets and authentication credentials.
-          </p>
-        </div>
+      <header className="border-b border-border/40 pb-5">
+        <h1 className="font-display text-3xl font-extrabold tracking-tight flex items-center gap-3">
+          <Link2 className="size-7 text-primary" /> Connected Networks
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Manage integrations for LinkedIn, X (Twitter), and Instagram publishing.
+        </p>
       </header>
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -98,47 +93,37 @@ function Inner() {
           const acct = accounts.find((a) => a.platform === p);
           const connected = !!acct?.connected;
           return (
-            <div
-              key={p}
-              className={
-                "surface-glass p-6 flex flex-col justify-between surface-glass-hover relative overflow-hidden transition-all " +
-                (connected ? "border-emerald-500/30" : "border-white/10")
-              }
-            >
+            <div key={p} className="glass-card glass-card-hover p-6 flex flex-col justify-between space-y-6">
               <div>
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span
-                      className="size-4 rounded-full shadow-md"
+                      className="grid size-10 place-items-center rounded-xl text-white font-bold"
                       style={{ background: meta.colorVar }}
-                    />
-                    <h3 className="text-lg font-bold text-white">{meta.label}</h3>
+                    >
+                      {p === "linkedin" && <Linkedin className="size-5" />}
+                      {p === "twitter" && <Twitter className="size-5" />}
+                      {p === "instagram" && <Instagram className="size-5" />}
+                    </span>
+                    <div>
+                      <h3 className="font-display text-lg font-bold">{meta.label}</h3>
+                      <p className="text-xs text-muted-foreground">{meta.charLimit} char limit</p>
+                    </div>
                   </div>
-                  <span className="text-xs font-mono text-slate-500 bg-slate-950/60 px-2 py-1 rounded-md border border-white/5">
-                    {meta.charLimit} chars
-                  </span>
                 </div>
 
-                <p className="text-xs text-slate-400 leading-relaxed mb-6">
-                  {SETUP_NOTES[p]}
-                </p>
-
-                <div className="rounded-xl border border-white/5 bg-slate-950/60 p-3.5 mb-6">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-400 font-mono text-[11px]">Status</span>
-                    {connected ? (
-                      <span className="inline-flex items-center gap-1 font-semibold text-emerald-400">
-                        <CheckCircle2 className="size-3.5 text-emerald-400" /> Active
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 font-semibold text-slate-500">
-                        <Plug className="size-3.5" /> Disconnected
-                      </span>
-                    )}
-                  </div>
-                  <div className="mt-2 text-xs font-mono text-slate-200 truncate">
-                    {connected ? (acct?.display_name ?? "Connected") : "No account linked"}
-                  </div>
+                <div className="mt-6 flex items-center gap-2 rounded-xl bg-card/40 p-3 border border-border/40 text-sm">
+                  {connected ? (
+                    <>
+                      <CheckCircle2 className="size-4 text-success shrink-0" />
+                      <span className="font-medium truncate text-foreground">{acct?.display_name ?? "Connected"}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plug className="size-4 text-muted-foreground shrink-0" />
+                      <span className="text-muted-foreground">Not connected</span>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -146,17 +131,14 @@ function Inner() {
                 {connected ? (
                   <Button
                     variant="outline"
-                    className="w-full border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 font-semibold rounded-xl text-xs"
+                    className="w-full border-destructive/40 text-destructive hover:bg-destructive/10"
                     onClick={() => disc.mutate(p)}
                   >
                     Disconnect Channel
                   </Button>
                 ) : (
-                  <Button
-                    className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs shadow-glow-emerald"
-                    onClick={() => setDialogFor(p)}
-                  >
-                    <Link2 className="size-3.5 mr-1.5" /> Connect {meta.label}
+                  <Button className="w-full bg-brand-gradient font-semibold shadow-glow" onClick={() => setDialogFor(p)}>
+                    Connect {meta.label}
                   </Button>
                 )}
               </div>
@@ -166,50 +148,43 @@ function Inner() {
       </div>
 
       <Dialog open={!!dialogFor} onOpenChange={(o) => !o && setDialogFor(null)}>
-        <DialogContent className="bg-slate-950/90 backdrop-blur-2xl border border-white/10 text-slate-100 rounded-2xl sm:max-w-md">
+        <DialogContent className="glass-panel border-border/60">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-white flex items-center gap-2">
-              <Zap className="size-5 text-emerald-400" />
+            <DialogTitle className="font-display text-xl font-bold">
               Connect {dialogFor ? PLATFORM_META[dialogFor].label : ""}
             </DialogTitle>
-            <DialogDescription className="text-xs text-slate-400">
+            <DialogDescription className="text-sm text-muted-foreground">
               {dialogFor ? SETUP_NOTES[dialogFor] : ""}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-3 py-2">
-            <Label htmlFor="handle" className="text-xs font-semibold text-slate-300">
-              Handle / Account Display Name
-            </Label>
+            <Label htmlFor="handle" className="text-xs font-semibold">Account Handle / Profile Identifier</Label>
             <Input
               id="handle"
-              placeholder="@yourhandle"
+              placeholder="@yourprofile"
               value={handle}
               onChange={(e) => setHandle(e.target.value)}
               maxLength={80}
-              className="bg-slate-900 border-white/10 text-slate-100 text-sm rounded-xl focus:border-emerald-500"
+              className="bg-card/40 border-border/60 focus:border-primary"
             />
-            <p className="text-[11px] text-slate-500">
-              Enter your social handle to authorize and label this publishing connection.
+            <p className="text-xs text-muted-foreground">
+              Enter your social handle to authorize and label this connection.
             </p>
           </div>
 
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              variant="ghost"
-              onClick={() => setDialogFor(null)}
-              className="text-slate-400 hover:text-white rounded-xl"
-            >
+          <DialogFooter className="gap-2">
+            <Button variant="ghost" onClick={() => setDialogFor(null)}>
               Cancel
             </Button>
             <Button
+              className="bg-brand-gradient font-semibold shadow-glow"
               disabled={!handle.trim() || connect.isPending}
               onClick={() =>
                 dialogFor && connect.mutate({ platform: dialogFor, displayName: handle.trim() })
               }
-              className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl"
             >
-              Authorize & Connect
+              Confirm & Connect
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -217,3 +192,4 @@ function Inner() {
     </div>
   );
 }
+

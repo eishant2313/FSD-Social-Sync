@@ -3,28 +3,29 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
-  Zap,
+  Radio,
   Send,
   Calendar,
   Layers,
   Sparkles,
   ArrowRight,
+  Linkedin,
+  Twitter,
+  Instagram,
   CheckCircle2,
-  Share2,
-  BarChart3,
-  Globe,
-  Clock,
-  ShieldCheck,
+  Zap,
+  BarChart2,
+  Lock,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SocialSync Quantum · Next-Gen Social Publishing Studio" },
+      { title: "Broadcast — Publish to LinkedIn, X & Instagram from one studio" },
       {
         name: "description",
         content:
-          "Publish to LinkedIn, X and Instagram from one unified, high-performance studio with real-time platform previews and automated scheduling.",
+          "Compose once, schedule everywhere. A studio-grade social publishing platform for creators and teams.",
       },
     ],
   }),
@@ -33,210 +34,227 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   const [signedIn, setSignedIn] = useState(false);
+  const [activeTab, setActiveTab] = useState<"all" | "linkedin" | "twitter" | "instagram">("all");
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
   }, []);
 
   return (
-    <div className="min-h-screen bg-background bg-hero-mesh text-slate-100 selection:bg-emerald-500 selection:text-slate-950">
-      {/* Header Bar */}
-      <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 border-b border-white/5">
-        <div className="flex items-center gap-3">
-          <span className="grid size-10 place-items-center rounded-xl bg-neon-gradient shadow-glow-emerald">
-            <Zap className="size-5 text-slate-950 fill-slate-950" />
-          </span>
-          <div>
-            <span className="text-xl font-bold tracking-tight text-white flex items-center gap-1">
-              Social<span className="text-gradient">Sync</span>
-            </span>
-          </div>
-        </div>
+    <div className="relative min-h-screen bg-background bg-hero text-foreground selection:bg-primary/30 selection:text-primary-foreground">
+      {/* Dynamic Background Mesh Orbs */}
+      <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[600px] w-[1000px] -translate-x-1/2 rounded-full bg-gradient-to-tr from-primary/20 via-accent/15 to-transparent blur-3xl" />
 
-        <nav className="flex items-center gap-3">
-          {signedIn ? (
-            <Button
-              asChild
-              className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl shadow-glow-emerald px-6"
-            >
-              <Link to="/dashboard">
-                Open Studio <ArrowRight className="size-4 ml-1" />
-              </Link>
-            </Button>
-          ) : (
-            <>
-              <Button
-                asChild
-                variant="ghost"
-                className="text-slate-300 hover:text-white hover:bg-slate-800/60 rounded-xl"
-              >
-                <Link to="/auth">Sign in</Link>
-              </Button>
-              <Button
-                asChild
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl shadow-glow-emerald px-5"
-              >
-                <Link to="/auth" search={{ mode: "signup" }}>
-                  Get Started Free
+      {/* Glass Navigation Bar */}
+      <header className="sticky top-0 z-50 border-b border-border/40 bg-background/60 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+          <Link to="/" className="flex items-center gap-3 font-display text-xl font-bold tracking-tight">
+            <span className="grid size-10 place-items-center rounded-xl bg-brand-gradient shadow-glow-cyan transition-transform hover:scale-105">
+              <Radio className="size-5 text-primary-foreground" />
+            </span>
+            <span className="flex items-center gap-1.5">
+              Broadcast
+              <span className="rounded-md bg-primary/10 px-2 py-0.5 font-sans text-xs font-semibold text-primary">
+                PRO
+              </span>
+            </span>
+          </Link>
+
+          <nav className="flex items-center gap-3">
+            {signedIn ? (
+              <Button asChild size="sm" className="bg-brand-gradient shadow-glow font-medium transition-all hover:opacity-95">
+                <Link to="/dashboard">
+                  Open Studio <ArrowRight className="ml-1.5 size-4" />
                 </Link>
               </Button>
-            </>
-          )}
-        </nav>
+            ) : (
+              <>
+                <Button asChild variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  <Link to="/auth">Sign in</Link>
+                </Button>
+                <Button asChild size="sm" className="bg-brand-gradient font-semibold shadow-glow transition-all hover:scale-[1.02]">
+                  <Link to="/auth" search={{ mode: "signup" }}>
+                    Get started free
+                  </Link>
+                </Button>
+              </>
+            )}
+          </nav>
+        </div>
       </header>
 
-      {/* Hero Section */}
       <main className="mx-auto max-w-7xl px-6">
-        <section className="mx-auto max-w-4xl pt-16 pb-20 text-center sm:pt-24 sm:pb-28">
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-medium text-emerald-300 backdrop-blur-md shadow-lg shadow-emerald-500/10 mb-8">
-            <Sparkles className="size-4 text-emerald-400 animate-pulse" />
-            SocialSync 2.0 Quantum Studio is Live
+        {/* Hero Section */}
+        <section className="relative mx-auto max-w-4xl pt-20 pb-16 text-center sm:pt-28 sm:pb-24">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary shadow-glow-cyan backdrop-blur-md">
+            <Sparkles className="size-3.5 animate-pulse text-primary" />
+            <span>Next-Gen Multi-Platform Social Orchestration</span>
           </div>
 
-          <h1 className="text-5xl font-extrabold leading-tight tracking-tight text-white sm:text-7xl">
-            Publish Everywhere. <br />
-            <span className="text-gradient">Zero Friction.</span>
+          <h1 className="mt-8 font-display text-5xl font-extrabold tracking-tight sm:text-7xl">
+            Compose once. <br />
+            <span className="text-brand-gradient">Broadcast</span> everywhere.
           </h1>
 
-          <p className="mt-6 text-lg text-slate-400 sm:text-xl max-w-2xl mx-auto leading-relaxed">
-            Compose once and broadcast seamless multi-network content to LinkedIn, X (Twitter), and
-            Instagram with live platform previews, character optimization, and bulletproof scheduled delivery.
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
+            Plan, schedule, and publish seamlessly to LinkedIn, X, and Instagram from one unified, sleek studio. Live character counts, visual previews, and guaranteed delivery.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
-            <Button
-              asChild
-              size="lg"
-              className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-2xl shadow-glow-emerald px-8 py-6 text-base"
-            >
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+            <Button asChild size="lg" className="bg-brand-gradient text-base font-semibold shadow-glow hover:opacity-95">
               <Link to="/auth" search={{ mode: "signup" }}>
-                Start Publishing Free <ArrowRight className="size-5 ml-2" />
+                Start Publishing Free <ArrowRight className="ml-2 size-5" />
               </Link>
             </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="w-full sm:w-auto border-white/10 bg-slate-900/60 hover:bg-slate-800 text-slate-200 rounded-2xl px-8 py-6 text-base backdrop-blur-xl"
-            >
-              <Link to="/auth">Sign In to Dashboard</Link>
+            <Button asChild size="lg" variant="outline" className="border-border/60 bg-card/40 backdrop-blur-md hover:bg-card/80">
+              <Link to="/auth">Explore Demo</Link>
             </Button>
           </div>
 
-          {/* Interactive Feature Mockup Banner */}
-          <div className="mt-16 relative rounded-2xl border border-white/10 bg-slate-900/60 p-4 sm:p-6 backdrop-blur-2xl shadow-2xl overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 via-indigo-500 to-purple-500" />
-            <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
-              <div className="flex items-center gap-2">
-                <span className="size-3 rounded-full bg-rose-500" />
-                <span className="size-3 rounded-full bg-amber-500" />
-                <span className="size-3 rounded-full bg-emerald-500" />
-                <span className="ml-2 text-xs font-mono text-slate-400">composer_studio_v2.tsx</span>
+          {/* Social Platform Badges */}
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2 rounded-full border border-border/50 bg-card/30 px-3.5 py-1.5 backdrop-blur">
+              <Linkedin className="size-4 text-[#0A66C2]" /> LinkedIn Posts & Articles
+            </div>
+            <div className="flex items-center gap-2 rounded-full border border-border/50 bg-card/30 px-3.5 py-1.5 backdrop-blur">
+              <Twitter className="size-4 text-[#1DA1F2]" /> X (Twitter) Threads
+            </div>
+            <div className="flex items-center gap-2 rounded-full border border-border/50 bg-card/30 px-3.5 py-1.5 backdrop-blur">
+              <Instagram className="size-4 text-[#E4405F]" /> Instagram Captions
+            </div>
+          </div>
+        </section>
+
+        {/* Live Studio Interactive Mockup Showcase */}
+        <section className="relative mx-auto max-w-5xl pb-24">
+          <div className="glass-panel overflow-hidden rounded-2xl p-6 sm:p-8">
+            <div className="flex flex-wrap items-center justify-between border-b border-border/40 pb-5 gap-4">
+              <div className="flex items-center gap-3">
+                <div className="flex gap-1.5">
+                  <div className="size-3 rounded-full bg-destructive/60" />
+                  <div className="size-3 rounded-full bg-warning/60" />
+                  <div className="size-3 rounded-full bg-success/60" />
+                </div>
+                <span className="font-mono text-xs text-muted-foreground">broadcast.studio/composer</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-mono font-semibold">
-                  ● 3 NETWORKS READY
-                </span>
+              <div className="flex items-center gap-2 rounded-lg bg-card/60 p-1 border border-border/40">
+                {(["all", "linkedin", "twitter", "instagram"] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-3 py-1 text-xs font-medium rounded-md capitalize transition-all ${
+                      activeTab === tab
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3 text-left">
-              <div className="rounded-xl border border-white/5 bg-slate-950/80 p-4">
-                <div className="flex items-center justify-between text-xs text-blue-400 font-semibold mb-2">
-                  <span>LinkedIn Post</span>
-                  <span className="text-[10px] text-slate-500">3,000 max</span>
+            <div className="mt-6 grid gap-6 md:grid-cols-12">
+              <div className="md:col-span-7 space-y-4">
+                <div className="rounded-xl border border-border/50 bg-card/40 p-4">
+                  <p className="font-mono text-xs text-muted-foreground mb-2">Compose Master Post:</p>
+                  <p className="text-sm leading-relaxed text-foreground font-sans">
+                    🚀 Excited to announce our upcoming feature suite for multi-channel social publishing! Broadcast lets you schedule posts directly to LinkedIn, X & Instagram simultaneously. #SocialMedia #Productivity
+                  </p>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                  🚀 Elevate your engineering productivity with SocialSync Quantum. Publish cross-platform in one click! #buildinpublic
-                </p>
-                <div className="mt-3 flex items-center justify-between text-[10px] text-slate-500 pt-2 border-t border-white/5">
-                  <span>Preview Ready</span>
-                  <CheckCircle2 className="size-3 text-emerald-400" />
-                </div>
-              </div>
-
-              <div className="rounded-xl border border-white/5 bg-slate-950/80 p-4">
-                <div className="flex items-center justify-between text-xs text-sky-400 font-semibold mb-2">
-                  <span>X (Twitter) Thread</span>
-                  <span className="text-[10px] text-slate-500">280 max</span>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                  Shipping updates fast! Check out the brand new UI redesign for SocialSync. Multi-platform syncing made effortless. ⚡
-                </p>
-                <div className="mt-3 flex items-center justify-between text-[10px] text-slate-500 pt-2 border-t border-white/5">
-                  <span>241 / 280 chars</span>
-                  <CheckCircle2 className="size-3 text-emerald-400" />
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5"><CheckCircle2 className="size-4 text-success" /> Auto-sync enabled</span>
+                  <span>214 / 280 characters</span>
                 </div>
               </div>
-
-              <div className="rounded-xl border border-white/5 bg-slate-950/80 p-4">
-                <div className="flex items-center justify-between text-xs text-pink-400 font-semibold mb-2">
-                  <span>Instagram Caption</span>
-                  <span className="text-[10px] text-slate-500">2,200 max</span>
+              <div className="md:col-span-5 flex flex-col justify-between rounded-xl border border-primary/20 bg-primary/5 p-4 backdrop-blur">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-primary uppercase tracking-wider">Live Preview</span>
+                  <span className="flex size-2 rounded-full bg-success animate-ping" />
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                  Visual perfection meets scheduling power. Clean aesthetics and dynamic analytics. ✨ #ui #design #tech
-                </p>
-                <div className="mt-3 flex items-center justify-between text-[10px] text-slate-500 pt-2 border-t border-white/5">
-                  <span>Media Attached</span>
-                  <CheckCircle2 className="size-3 text-emerald-400" />
+                <div className="my-3 space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-medium text-foreground">
+                    <Linkedin className="size-4 text-[#0A66C2]" /> LinkedIn Post Ready
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-medium text-foreground">
+                    <Twitter className="size-4 text-[#1DA1F2]" /> X Tweet Ready
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-medium text-foreground">
+                    <Instagram className="size-4 text-[#E4405F]" /> Instagram Post Ready
+                  </div>
                 </div>
+                <Button size="sm" className="w-full bg-brand-gradient font-medium text-xs shadow-glow">
+                  Schedule Post <Send className="ml-1.5 size-3.5" />
+                </Button>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Features Showcase */}
-        <section className="grid gap-6 pb-24 sm:grid-cols-3">
+        {/* Core Features Grid */}
+        <section className="grid gap-6 pb-28 sm:grid-cols-3">
           {[
             {
               icon: Send,
               title: "Unified Studio Composer",
-              body: "Real-time live platform previews, character constraint warnings, image optimization, and smart AI prompt helpers.",
-              color: "text-emerald-400",
-              bg: "bg-emerald-500/10 border-emerald-500/20",
+              body: "Simultaneous composition with dynamic character meters per platform, custom image drops, and instant tag recommendations.",
             },
             {
               icon: Calendar,
-              title: "Automated Queue Scheduler",
-              body: "Schedule posts weeks ahead. Background execution guarantees reliable delivery even when you're offline.",
-              color: "text-indigo-400",
-              bg: "bg-indigo-500/10 border-indigo-500/20",
+              title: "Durable Background Scheduler",
+              body: "Set up queue slots weeks in advance. Reliable automated publishing powered by Supabase edge infrastructure.",
             },
             {
-              icon: BarChart3,
-              title: "Network Results & Pulse",
-              body: "Monitor status logs for every network in real time — track published posts, failures, and account credentials.",
-              color: "text-purple-400",
-              bg: "bg-purple-500/10 border-purple-500/20",
+              icon: Layers,
+              title: "Platform-Specific Insights",
+              body: "Detailed real-time logs for every channel — trace publishing confirmations, errors, and reach from one dashboard.",
             },
-          ].map(({ icon: Icon, title, body, color, bg }) => (
-            <div
-              key={title}
-              className="surface-glass p-8 surface-glass-hover flex flex-col justify-between"
-            >
-              <div>
-                <div className={`size-12 rounded-2xl border ${bg} grid place-items-center mb-6`}>
-                  <Icon className={`size-6 ${color}`} />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">{body}</p>
+            {
+              icon: Zap,
+              title: "Instant Account Syncing",
+              body: "Connect your social profiles safely in seconds with tokenized authentication and automatic key refreshing.",
+            },
+            {
+              icon: BarChart2,
+              title: "Performance Analytics",
+              body: "Track post frequency, timing success rates, and active content queues with clean visual metrics.",
+            },
+            {
+              icon: Lock,
+              title: "Enterprise Grade Security",
+              body: "Row-Level Security (RLS) ensures your drafts and API keys remain encrypted and restricted to your account.",
+            },
+          ].map(({ icon: Icon, title, body }) => (
+            <div key={title} className="glass-card glass-card-hover p-7">
+              <div className="grid size-11 place-items-center rounded-xl bg-primary/10 border border-primary/20 text-primary">
+                <Icon className="size-5" />
               </div>
+              <h3 className="mt-5 text-xl font-bold font-display">{title}</h3>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{body}</p>
             </div>
           ))}
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/10 bg-slate-950/80 backdrop-blur-md">
-        <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+      {/* Studio Footer */}
+      <footer className="border-t border-border/40 bg-background/40 backdrop-blur-md">
+        <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
-            <Zap className="size-4 text-emerald-400" />
-            <span className="font-semibold text-slate-300">SocialSync Quantum Studio</span>
-            <span>· Built for teams that ship consistently.</span>
+            <span className="grid size-6 place-items-center rounded-md bg-brand-gradient text-primary-foreground font-bold">
+              B
+            </span>
+            <span>Broadcast Studio · Multi-Platform Social Orchestration</span>
           </div>
-          <div>© {new Date().getFullYear()} SocialSync Inc. All rights reserved.</div>
+          <div className="flex items-center gap-6">
+            <span className="flex items-center gap-2">
+              <span className="size-2 rounded-full bg-success" /> All Systems Operational
+            </span>
+            <Link to="/auth" className="hover:text-foreground transition-colors">Sign In</Link>
+            <Link to="/auth" search={{ mode: "signup" }} className="hover:text-foreground transition-colors">Register</Link>
+          </div>
         </div>
       </footer>
     </div>
   );
 }
+

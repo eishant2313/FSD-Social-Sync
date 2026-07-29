@@ -9,19 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  Zap,
-  LayoutDashboard,
-  PencilLine,
-  CalendarDays,
-  Link2,
-  LogOut,
-  Sparkles,
-  Search,
-  Bell,
-  PlusCircle,
-  ShieldCheck,
-} from "lucide-react";
+import { Radio, LayoutDashboard, PencilLine, CalendarDays, Link2, LogOut, Plus, User, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -36,9 +24,9 @@ export const Route = createFileRoute("/_authenticated")({
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/composer", label: "Composer Studio", icon: PencilLine },
-  { to: "/calendar", label: "Schedule Calendar", icon: CalendarDays },
-  { to: "/accounts", label: "Connected Networks", icon: Link2 },
+  { to: "/composer", label: "Composer", icon: PencilLine },
+  { to: "/calendar", label: "Calendar", icon: CalendarDays },
+  { to: "/accounts", label: "Accounts", icon: Link2 },
 ] as const;
 
 function AuthedShell() {
@@ -57,32 +45,29 @@ function AuthedShell() {
     navigate({ to: "/auth", replace: true });
   }
 
-  const userInitial = (email[0] || "U").toUpperCase();
-
   return (
-    <div className="flex min-h-screen bg-background bg-hero-mesh">
-      {/* Floating Glass Sidebar */}
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-white/10 bg-slate-950/60 backdrop-blur-2xl text-slate-200 md:flex">
-        <div className="flex h-20 items-center justify-between px-6 border-b border-white/5">
-          <Link to="/dashboard" className="flex items-center gap-3 group">
-            <span className="grid size-10 place-items-center rounded-xl bg-neon-gradient shadow-glow-emerald transition-transform group-hover:scale-105">
-              <Zap className="size-5 text-slate-950 fill-slate-950" />
+    <div className="flex min-h-screen bg-background bg-hero text-foreground">
+      {/* Desktop Sidebar Navigation */}
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border/60 bg-sidebar/80 backdrop-blur-xl text-sidebar-foreground md:flex">
+        <div className="flex h-20 items-center justify-between px-6 border-b border-sidebar-border/40">
+          <Link to="/dashboard" className="flex items-center gap-3 font-display font-bold text-lg">
+            <span className="grid size-9 place-items-center rounded-xl bg-brand-gradient shadow-glow-cyan">
+              <Radio className="size-4 text-primary-foreground" />
             </span>
-            <div>
-              <span className="text-lg font-bold tracking-tight text-white flex items-center gap-1">
-                Social<span className="text-gradient">Sync</span>
-              </span>
-              <span className="text-[10px] block font-mono text-emerald-400 tracking-wider font-semibold uppercase">
-                Quantum Studio
-              </span>
-            </div>
+            <span>Broadcast</span>
           </Link>
+          <span className="flex size-2 rounded-full bg-success animate-pulse" title="Live Sync Active" />
         </div>
 
-        <nav className="flex-1 space-y-1.5 px-4 py-6">
-          <div className="px-3 mb-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider font-mono">
-            Navigation
-          </div>
+        <div className="px-4 py-4">
+          <Button asChild size="sm" className="w-full bg-brand-gradient font-semibold shadow-glow justify-start gap-2">
+            <Link to="/composer">
+              <Plus className="size-4" /> New Post
+            </Link>
+          </Button>
+        </div>
+
+        <nav className="flex-1 space-y-1.5 px-3 py-2">
           {NAV.map(({ to, label, icon: Icon }) => {
             const active = pathname === to || pathname.startsWith(to + "/");
             return (
@@ -90,92 +75,65 @@ function AuthedShell() {
                 key={to}
                 to={to}
                 className={
-                  "flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 " +
+                  "group relative flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-200 " +
                   (active
-                    ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-lg shadow-emerald-500/10 font-semibold"
-                    : "text-slate-300 hover:bg-slate-800/50 hover:text-white border border-transparent")
+                    ? "bg-primary/15 text-primary shadow-sm border border-primary/20"
+                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground")
                 }
               >
-                <div className="flex items-center gap-3">
-                  <Icon className={`size-4.5 ${active ? "text-emerald-400" : "text-slate-400"}`} />
-                  {label}
-                </div>
+                <Icon className={`size-4 transition-transform group-hover:scale-110 ${active ? "text-primary" : "text-muted-foreground"}`} />
+                <span>{label}</span>
                 {active && (
-                  <span className="size-1.5 rounded-full bg-emerald-400 shadow-glow-emerald" />
+                  <span className="absolute right-3 size-1.5 rounded-full bg-primary shadow-glow-cyan" />
                 )}
               </Link>
             );
           })}
         </nav>
 
-        {/* User Card & Logout */}
-        <div className="border-t border-white/10 p-4 bg-slate-900/40">
-          <div className="flex items-center gap-3 rounded-xl bg-slate-800/40 p-3 border border-white/5 mb-3">
-            <div className="relative grid size-9 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-emerald-400 text-sm font-bold text-white shadow-md">
-              {userInitial}
-              <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-emerald-400 border-2 border-slate-900" />
+        <div className="border-t border-sidebar-border/50 p-4 space-y-3">
+          <div className="flex items-center gap-3 rounded-xl bg-card/40 p-2.5 border border-border/40">
+            <div className="grid size-8 place-items-center rounded-lg bg-primary/20 text-primary font-bold text-xs">
+              <User className="size-4" />
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-semibold text-white">{email}</p>
-              <p className="text-[10px] text-emerald-400/90 font-mono flex items-center gap-1">
-                <ShieldCheck className="size-3" /> Pro Workspace
-              </p>
+            <div className="flex-1 min-w-0">
+              <p className="truncate text-xs font-semibold text-foreground">{email.split("@")[0]}</p>
+              <p className="truncate text-[10px] text-muted-foreground">{email}</p>
             </div>
           </div>
-
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-start text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl"
+            className="w-full justify-start text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10"
             onClick={signOut}
           >
-            <LogOut className="size-4 mr-2" />
-            Sign out
+            <LogOut className="mr-2 size-3.5" /> Sign out
           </Button>
         </div>
       </aside>
 
-      {/* Main Area */}
-      <div className="flex min-h-screen flex-1 flex-col">
-        {/* Top Header Bar */}
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-slate-950/70 backdrop-blur-xl px-6">
-          <div className="flex items-center gap-3">
-            <div className="relative hidden sm:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-500" />
-              <input
-                type="text"
-                placeholder="Search posts, platforms, schedule..."
-                className="w-64 sm:w-80 rounded-xl bg-slate-900/70 border border-white/10 pl-9 pr-4 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Button
-              asChild
-              size="sm"
-              className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl shadow-glow-emerald"
-            >
-              <Link to="/composer">
-                <PlusCircle className="size-4 mr-1.5" />
-                Quick Compose
-              </Link>
-            </Button>
-
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/70 border border-white/10 text-xs text-slate-300">
-              <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-mono text-[11px] text-slate-400">3 Networks Live</span>
-            </div>
-          </div>
+      {/* Main Content Area */}
+      <div className="flex min-h-screen flex-1 flex-col overflow-hidden">
+        {/* Mobile Header */}
+        <header className="flex h-16 items-center justify-between border-b border-border/50 bg-background/60 backdrop-blur-md px-5 md:hidden">
+          <Link to="/dashboard" className="flex items-center gap-2.5 font-bold font-display">
+            <span className="grid size-8 place-items-center rounded-lg bg-brand-gradient">
+              <Radio className="size-4 text-primary-foreground" />
+            </span>
+            Broadcast Studio
+          </Link>
+          <Button variant="ghost" size="icon" onClick={signOut}>
+            <LogOut className="size-4" />
+          </Button>
         </header>
 
-        {/* Content Area */}
-        <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-8">
+        {/* Dynamic Route Container */}
+        <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-8 overflow-y-auto">
           <Outlet />
         </div>
 
-        {/* Mobile Bottom Navigation */}
-        <nav className="sticky bottom-0 z-40 grid grid-cols-4 border-t border-white/10 bg-slate-950/90 backdrop-blur-2xl md:hidden">
+        {/* Mobile Bottom Floating Navigation */}
+        <nav className="sticky bottom-0 z-40 grid grid-cols-4 border-t border-border/50 bg-background/80 backdrop-blur-xl p-1.5 md:hidden">
           {NAV.map(({ to, label, icon: Icon }) => {
             const active = pathname === to || pathname.startsWith(to + "/");
             return (
@@ -183,12 +141,12 @@ function AuthedShell() {
                 key={to}
                 to={to}
                 className={
-                  "flex flex-col items-center gap-1 py-3 text-[10px] font-medium transition-colors " +
-                  (active ? "text-emerald-400 font-semibold" : "text-slate-400 hover:text-slate-200")
+                  "flex flex-col items-center justify-center py-2 text-[10px] font-medium transition-colors " +
+                  (active ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground")
                 }
               >
-                <Icon className={`size-5 ${active ? "text-emerald-400" : ""}`} />
-                {label}
+                <Icon className={`size-4 ${active ? "text-primary" : ""}`} />
+                <span>{label}</span>
               </Link>
             );
           })}
@@ -197,3 +155,4 @@ function AuthedShell() {
     </div>
   );
 }
+

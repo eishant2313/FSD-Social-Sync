@@ -3,7 +3,6 @@ import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { listPosts } from "@/lib/posts.functions";
 import { listConnectedAccounts } from "@/lib/accounts.functions";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PLATFORM_META, type Platform } from "@/lib/platform-constraints";
 import {
@@ -13,12 +12,10 @@ import {
   CheckCircle2,
   Clock,
   AlertTriangle,
-  Sparkles,
-  TrendingUp,
-  ArrowRight,
   Send,
-  Zap,
-  Globe,
+  TrendingUp,
+  Sparkles,
+  ArrowUpRight,
   type LucideIcon,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -32,45 +29,24 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
       context.queryClient.ensureQueryData(postsQO),
       context.queryClient.ensureQueryData(acctsQO),
     ]),
-  head: () => ({ meta: [{ title: "Dashboard · SocialSync Quantum Studio" }] }),
+  head: () => ({ meta: [{ title: "Studio Dashboard · Broadcast" }] }),
   component: Dashboard,
 });
 
 function StatusPill({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string; icon: LucideIcon }> = {
-    PUBLISHED: {
-      label: "Published",
-      cls: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30",
-      icon: CheckCircle2,
-    },
-    SCHEDULED: {
-      label: "Scheduled",
-      cls: "bg-sky-500/15 text-sky-400 border border-sky-500/30",
-      icon: Clock,
-    },
-    PUBLISHING: {
-      label: "Publishing",
-      cls: "bg-amber-500/15 text-amber-400 border border-amber-500/30 animate-pulse",
-      icon: Clock,
-    },
-    FAILED: {
-      label: "Failed",
-      cls: "bg-rose-500/15 text-rose-400 border border-rose-500/30",
-      icon: AlertTriangle,
-    },
-    DRAFT: {
-      label: "Draft",
-      cls: "bg-slate-800/60 text-slate-400 border border-slate-700/50",
-      icon: PencilLine,
-    },
+    PUBLISHED: { label: "Published", cls: "bg-success/15 text-success border-success/30", icon: CheckCircle2 },
+    SCHEDULED: { label: "Scheduled", cls: "bg-primary/15 text-primary border-primary/30", icon: Clock },
+    PUBLISHING: { label: "Publishing", cls: "bg-warning/15 text-warning border-warning/30 animate-pulse", icon: Clock },
+    FAILED: { label: "Failed", cls: "bg-destructive/15 text-destructive border-destructive/30", icon: AlertTriangle },
+    DRAFT: { label: "Draft", cls: "bg-muted/40 text-muted-foreground border-border/40", icon: PencilLine },
   };
   const s = map[status] ?? map.DRAFT;
   const Icon = s.icon;
   return (
     <span
       className={
-        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold backdrop-blur-md " +
-        s.cls
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold backdrop-blur-md " + s.cls
       }
     >
       <Icon className="size-3.5" />
@@ -83,8 +59,8 @@ function Dashboard() {
   return (
     <Suspense
       fallback={
-        <div className="flex h-64 items-center justify-center text-slate-400 font-mono text-xs">
-          <Zap className="size-5 text-emerald-400 animate-spin mr-2" /> Loading Quantum Workspace…
+        <div className="flex h-64 items-center justify-center text-muted-foreground">
+          <span className="size-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         </div>
       }
     >
@@ -111,173 +87,132 @@ function Inner() {
 
   return (
     <div className="space-y-8">
-      {/* Dashboard Header */}
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6">
+      {/* Header Banner */}
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border/40 pb-6">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl flex items-center gap-3">
-            Dashboard Pulse
-            <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-400 border border-emerald-500/20">
-              Live Sync
-            </span>
-          </h1>
-          <p className="mt-1 text-sm text-slate-400">
-            Real-time analytics, queue status, and multi-network publishing health.
+          <h1 className="font-display text-3xl font-extrabold tracking-tight">Studio Overview</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Real-time status of your content pipeline and social accounts.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button
-            asChild
-            className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl shadow-glow-emerald px-5"
-          >
-            <Link to="/composer">
-              <PencilLine className="size-4 mr-2" />
-              New Studio Post
-            </Link>
-          </Button>
-        </div>
+        <Button asChild className="bg-brand-gradient font-semibold shadow-glow transition-all hover:scale-[1.02]">
+          <Link to="/composer">
+            <PencilLine className="mr-2 size-4" /> Compose Post
+          </Link>
+        </Button>
       </header>
 
-      {/* KPI Cards Grid */}
+      {/* Metrics Summary Widgets */}
       <section className="grid gap-5 sm:grid-cols-3">
-        <div className="surface-glass p-6 surface-glass-hover relative overflow-hidden">
-          <div className="flex items-center justify-between text-slate-400 mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider font-mono">
-              Published This Week
-            </span>
-            <div className="size-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 grid place-items-center">
-              <Send className="size-4 text-emerald-400" />
+        <div className="glass-card glass-card-hover p-6">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-xs font-semibold uppercase tracking-wider">Published (7d)</span>
+            <div className="grid size-9 place-items-center rounded-xl bg-success/15 text-success">
+              <TrendingUp className="size-4" />
             </div>
           </div>
-          <div className="flex items-baseline justify-between">
-            <span className="text-4xl font-extrabold text-white">{publishedThisWeek}</span>
-            <span className="inline-flex items-center text-xs font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md">
-              <TrendingUp className="size-3 mr-1" /> Active
-            </span>
+          <div className="mt-4 flex items-baseline gap-2">
+            <span className="font-display text-4xl font-extrabold">{publishedThisWeek}</span>
+            <span className="text-xs font-medium text-success">Posts delivered</span>
           </div>
-          <p className="mt-2 text-xs text-slate-400">Across LinkedIn, X & Instagram</p>
         </div>
 
-        <div className="surface-glass p-6 surface-glass-hover relative overflow-hidden">
-          <div className="flex items-center justify-between text-slate-400 mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider font-mono">
-              Scheduled Queue
-            </span>
-            <div className="size-9 rounded-xl bg-sky-500/10 border border-sky-500/20 grid place-items-center">
-              <Clock className="size-4 text-sky-400" />
+        <div className="glass-card glass-card-hover p-6">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-xs font-semibold uppercase tracking-wider">Queued & Scheduled</span>
+            <div className="grid size-9 place-items-center rounded-xl bg-primary/15 text-primary">
+              <Clock className="size-4" />
             </div>
           </div>
-          <div className="flex items-baseline justify-between">
-            <span className="text-4xl font-extrabold text-white">{scheduledCount}</span>
-            <span className="text-xs font-mono text-sky-400">Next 7 days</span>
+          <div className="mt-4 flex items-baseline gap-2">
+            <span className="font-display text-4xl font-extrabold">{scheduledCount}</span>
+            <span className="text-xs font-medium text-primary">Pending release</span>
           </div>
-          <p className="mt-2 text-xs text-slate-400">Queued for automated delivery</p>
         </div>
 
-        <div className="surface-glass p-6 surface-glass-hover relative overflow-hidden">
-          <div className="flex items-center justify-between text-slate-400 mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider font-mono">
-              Connected Networks
-            </span>
-            <div className="size-9 rounded-xl bg-purple-500/10 border border-purple-500/20 grid place-items-center">
-              <Globe className="size-4 text-purple-400" />
+        <div className="glass-card glass-card-hover p-6">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-xs font-semibold uppercase tracking-wider">Connected Channels</span>
+            <div className="grid size-9 place-items-center rounded-xl bg-accent/15 text-accent">
+              <Link2 className="size-4" />
             </div>
           </div>
-          <div className="flex items-baseline justify-between">
-            <span className="text-4xl font-extrabold text-white">
-              {connectedCount}
-              <span className="text-xl text-slate-500 font-normal"> / 3</span>
-            </span>
-            <span className="text-xs font-mono text-purple-400 font-semibold">
-              {connectedCount === 3 ? "Fully Connected" : "Action Needed"}
-            </span>
+          <div className="mt-4 flex items-baseline gap-2">
+            <span className="font-display text-4xl font-extrabold">{connectedCount}</span>
+            <span className="text-sm font-semibold text-muted-foreground">/ 3 active</span>
           </div>
-          <p className="mt-2 text-xs text-slate-400">Active publishing channels</p>
         </div>
       </section>
 
-      {/* Main Workspace Layout */}
+      {/* Content Columns */}
       <section className="grid gap-6 lg:grid-cols-2">
         {/* Upcoming Posts */}
-        <div className="surface-glass p-6">
-          <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
-            <div className="flex items-center gap-2">
-              <Clock className="size-4 text-sky-400" />
-              <h2 className="text-lg font-bold text-white">Upcoming Queue</h2>
+        <div className="glass-panel rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between border-b border-border/40 pb-4">
+              <h2 className="font-display text-lg font-bold flex items-center gap-2">
+                <Clock className="size-4 text-primary" /> Scheduled Queue
+              </h2>
+              <Link to="/calendar" className="text-xs font-semibold text-primary hover:underline flex items-center">
+                Calendar view <ArrowUpRight className="ml-1 size-3" />
+              </Link>
             </div>
-            <Link
-              to="/calendar"
-              className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1 transition-colors"
-            >
-              View Calendar <ArrowRight className="size-3" />
-            </Link>
-          </div>
 
-          <div className="space-y-3">
-            {upcoming.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-white/10 p-8 text-center">
-                <Calendar className="size-8 text-slate-600 mx-auto mb-2" />
-                <p className="text-sm font-medium text-slate-400">No posts currently queued</p>
-                <p className="text-xs text-slate-500 mt-1">
-                  Use the Composer Studio to schedule your next post.
-                </p>
-              </div>
-            ) : (
-              upcoming.map((p) => (
-                <div
-                  key={p.id}
-                  className="rounded-xl border border-white/10 bg-slate-950/60 p-4 hover:border-emerald-500/30 transition-all"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex flex-wrap gap-1.5">
-                      {(p.target_platforms as Platform[]).map((pl) => (
-                        <span
-                          key={pl}
-                          className="rounded-md px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase shadow-sm"
-                          style={{ background: PLATFORM_META[pl].colorVar, color: "white" }}
-                        >
-                          {PLATFORM_META[pl].label}
-                        </span>
-                      ))}
-                    </div>
-                    <span className="text-xs font-mono text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/20">
-                      in {p.scheduled_for ? formatDistanceToNow(new Date(p.scheduled_for)) : "—"}
-                    </span>
-                  </div>
-                  <p className="line-clamp-2 text-xs text-slate-300 leading-relaxed font-sans">
-                    {p.content}
-                  </p>
+            <div className="mt-4 space-y-3">
+              {upcoming.length === 0 ? (
+                <div className="py-8 text-center text-sm text-muted-foreground rounded-xl border border-dashed border-border/50">
+                  <p>No posts currently queued.</p>
+                  <Button asChild variant="link" size="sm" className="mt-2 text-primary">
+                    <Link to="/composer">Schedule a new post</Link>
+                  </Button>
                 </div>
-              ))
-            )}
+              ) : (
+                upcoming.map((p) => (
+                  <div key={p.id} className="rounded-xl border border-border/50 bg-card/40 p-4 transition-all hover:bg-card/70">
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-wrap gap-1.5">
+                        {(p.target_platforms as Platform[]).map((pl) => (
+                          <span
+                            key={pl}
+                            className="rounded-md px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase shadow-xs"
+                            style={{ background: PLATFORM_META[pl].colorVar, color: "white" }}
+                          >
+                            {PLATFORM_META[pl].label}
+                          </span>
+                        ))}
+                      </div>
+                      <span className="text-xs font-mono text-muted-foreground">
+                        in {p.scheduled_for ? formatDistanceToNow(new Date(p.scheduled_for)) : "—"}
+                      </span>
+                    </div>
+                    <p className="mt-2.5 line-clamp-2 text-sm leading-relaxed text-foreground">{p.content}</p>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
 
         {/* Recent Activity */}
-        <div className="surface-glass p-6">
-          <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
-            <div className="flex items-center gap-2">
-              <Sparkles className="size-4 text-purple-400" />
-              <h2 className="text-lg font-bold text-white">Recent Activity Stream</h2>
-            </div>
-            <span className="text-xs font-mono text-slate-500">Live feed</span>
+        <div className="glass-panel rounded-2xl p-6">
+          <div className="flex items-center justify-between border-b border-border/40 pb-4">
+            <h2 className="font-display text-lg font-bold flex items-center gap-2">
+              <Send className="size-4 text-accent" /> Recent Activity Log
+            </h2>
           </div>
 
-          <div>
+          <div className="mt-4">
             {recent.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-white/10 p-8 text-center">
-                <PencilLine className="size-8 text-slate-600 mx-auto mb-2" />
-                <p className="text-sm font-medium text-slate-400">No activity logged yet</p>
-                <p className="text-xs text-slate-500 mt-1">Your published posts will appear here.</p>
+              <div className="py-8 text-center text-sm text-muted-foreground rounded-xl border border-dashed border-border/50">
+                <p>Your publishing activity will appear here.</p>
               </div>
             ) : (
-              <ul className="divide-y divide-white/5">
+              <ul className="divide-y divide-border/40">
                 {recent.map((p) => (
                   <li key={p.id} className="flex items-center justify-between gap-4 py-3.5">
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs font-medium text-slate-200">
-                        {p.content || "(empty post)"}
-                      </p>
-                      <p className="text-[10px] text-slate-500 font-mono mt-0.5">
+                      <p className="truncate text-sm font-medium text-foreground">{p.content || "(empty post)"}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
                         {formatDistanceToNow(new Date(p.created_at), { addSuffix: true })}
                       </p>
                     </div>
@@ -290,27 +225,20 @@ function Inner() {
         </div>
       </section>
 
-      {/* Account Connection Banner */}
+      {/* Account Sync Banner */}
       {connectedCount < 3 && (
-        <div className="surface-glass p-6 border-emerald-500/30 bg-gradient-to-r from-emerald-950/40 via-slate-900/60 to-purple-950/40 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="size-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 grid place-items-center shrink-0">
-              <Link2 className="size-6 text-emerald-400" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-white">Unlock Full Multi-Channel Reach</h3>
-              <p className="text-xs text-slate-400 mt-0.5">
-                You have {connectedCount} of 3 platforms connected. Link all your networks to broadcast everywhere seamlessly.
-              </p>
-            </div>
+        <div className="glass-panel rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-l-4 border-l-primary">
+          <div className="space-y-1">
+            <h3 className="font-display text-base font-bold flex items-center gap-2">
+              <Sparkles className="size-4 text-primary" /> Connect your social profiles
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              You currently have {connectedCount} of 3 networks connected. Link LinkedIn, X and Instagram for one-click publishing.
+            </p>
           </div>
-          <Button
-            asChild
-            variant="outline"
-            className="border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-semibold rounded-xl text-xs shrink-0"
-          >
+          <Button asChild size="sm" className="bg-primary text-primary-foreground font-semibold">
             <Link to="/accounts">
-              <Link2 className="size-4 mr-1.5" /> Manage Accounts
+              <Link2 className="mr-1.5 size-4" /> Manage Accounts
             </Link>
           </Button>
         </div>
@@ -318,3 +246,4 @@ function Inner() {
     </div>
   );
 }
+
