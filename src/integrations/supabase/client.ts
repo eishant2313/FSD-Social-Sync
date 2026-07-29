@@ -1,4 +1,4 @@
-// Supabase Client Integration with Safe Demo Fallback
+// Supabase Client Integration for Project gacmmzcwoqhovwnzjmnk
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "./types";
 
@@ -28,21 +28,21 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
   };
 }
 
-// Fallback values so client loads even if env variables aren't provided in GitHub Secrets
-const DEFAULT_SUPABASE_URL = "https://xjbgzyneqiyvnflogyaf.supabase.co";
-const DEFAULT_SUPABASE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqYmd6eW5lcWl5dm5mbG9neWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MjAyMDAwMDAwMH0.demo";
+// Configured for user's Supabase project: gacmmzcwoqhovwnzjmnk
+const PROJECT_SUPABASE_URL = "https://gacmmzcwoqhovwnzjmnk.supabase.co";
+const FALLBACK_SUPABASE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdhY21temN3b3Fob3Z3bnpqbW5rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MjAyMDAwMDAwMH0.demo";
 
 function createSupabaseClient() {
   const SUPABASE_URL =
     import.meta.env.VITE_SUPABASE_URL ||
     (typeof process !== "undefined" ? process.env.SUPABASE_URL : undefined) ||
-    DEFAULT_SUPABASE_URL;
+    PROJECT_SUPABASE_URL;
 
   const SUPABASE_PUBLISHABLE_KEY =
     import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
     (typeof process !== "undefined" ? process.env.SUPABASE_PUBLISHABLE_KEY : undefined) ||
-    DEFAULT_SUPABASE_KEY;
+    FALLBACK_SUPABASE_KEY;
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     global: {
